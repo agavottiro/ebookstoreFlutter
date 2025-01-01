@@ -11,6 +11,7 @@ class MoreBooks extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: AppColor.backgroundGreen,
       appBar: const AppBarWidget(
@@ -24,14 +25,17 @@ class MoreBooks extends StatelessWidget {
           child: GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                crossAxisSpacing: 60,
+                crossAxisSpacing: 20,
                 mainAxisSpacing: 20,
-                childAspectRatio: .55,
+                childAspectRatio: .48,
               ),
               itemCount: state.allBooks.length,
               itemBuilder: (context, index) {
                 final book = state.allBooks[index];
-                return BookGridWidget(book: book);
+                return BookGridWidget(
+                  book: book,
+                  height: size.height * .32,
+                );
               }),
         );
       })),

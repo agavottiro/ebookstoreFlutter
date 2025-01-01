@@ -27,7 +27,7 @@ class Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Size size = MediaQuery.of(context).size;
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: AppColor.backgroundGreen,
       body: Column(
@@ -105,7 +105,7 @@ class Body extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
             child: SizedBox(
-              height: 280,
+              height: size.height * .40,
               child: BlocBuilder<EBookStoreBloc, EBookStoreState>(
                 builder: (context, state) {
                   if (state.exploreScreenState == ExploreScreenState.loading) {
@@ -119,14 +119,19 @@ class Body extends StatelessWidget {
                       child: Text("No books available"),
                     );
                   }
-                  return ListView.builder(
-                      padding: const EdgeInsets.only(left: 16),
-                      itemCount: 5,
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) {
-                        final book = state.allBooks[index];
-                        return BookGridWidget(book: book);
-                      });
+                  return SizedBox(
+                    child: ListView.builder(
+                        padding: const EdgeInsets.only(left: 16),
+                        itemCount: 5,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                          final book = state.allBooks[index];
+                          return BookGridWidget(
+                            book: book,
+                            height: size.height * .27,
+                          );
+                        }),
+                  );
                 },
               ),
             ),

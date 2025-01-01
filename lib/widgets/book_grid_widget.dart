@@ -6,10 +6,12 @@ import 'package:flutter/widgets.dart';
 
 class BookGridWidget extends StatelessWidget {
   final BookModel book;
+  final double height;
 
   const BookGridWidget({
     super.key,
     required this.book,
+    required this.height,
   });
 
   @override
@@ -17,7 +19,7 @@ class BookGridWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(right: 16),
       child: SizedBox(
-        width: 130,
+        width: 150,
         child: GestureDetector(
           onTap: () => Navigator.push(
               context,
@@ -26,12 +28,11 @@ class BookGridWidget extends StatelessWidget {
           child: Column(
             children: [
               Container(
-                height: 200,
+                height: height,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
                     image: DecorationImage(
-                        image: NetworkImage(book.imageUrl),
-                        fit: BoxFit.fitWidth)),
+                        image: NetworkImage(book.imageUrl), fit: BoxFit.fill)),
               ),
               Text(
                 "by ${book.author}",
@@ -47,7 +48,7 @@ class BookGridWidget extends StatelessWidget {
                     const TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
               ),
               Text(
-                book.price.toString(),
+                "\$${book.price.toString()}",
                 style: TextStyle(
                     color: AppColor.darkPink,
                     fontSize: 16,

@@ -6,10 +6,11 @@ class SearchBarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Padding(
       padding: const EdgeInsets.only(left: 16, right: 16),
       child: Container(
-        height: 80,
+        height: size.height * .12,
         color: AppColor.darkPink,
       ),
     );

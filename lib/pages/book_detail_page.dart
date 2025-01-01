@@ -29,56 +29,59 @@ class BookDetailPage extends StatelessWidget {
                 Center(
                   child: Container(
                     height: size.height * .35,
-                    width: size.width * .35,
+                    width: size.width * .45,
                     decoration: BoxDecoration(
                         image: DecorationImage(
                             image: NetworkImage(book.imageUrl),
-                            fit: BoxFit.cover),
+                            fit: BoxFit.fill),
                         borderRadius: BorderRadius.circular(15)),
                   ),
                 ),
                 SizedBox(
                   height: size.height * .05,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "\$ ${book.price.toString()}",
-                          style: TextStyle(
-                              fontSize: 20,
-                              color: AppColor.darkPink,
-                              fontWeight: FontWeight.w700),
-                        ),
-                        Text(
-                          book.title,
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w600,
+                SizedBox(
+                  height: size.height * .13,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "\$ ${book.price.toString()}",
+                            style: TextStyle(
+                                fontSize: 20,
+                                color: AppColor.darkPink,
+                                fontWeight: FontWeight.w700),
                           ),
-                        ),
-                        Text(
-                          book.author,
-                          style: TextStyle(
-                              fontSize: 16,
-                              color: AppColor.green,
-                              fontWeight: FontWeight.w500),
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 45,
-                      width: 45,
-                      child: Image(
-                        image: const Svg("assets/icons/bookmark-circle.svg"),
-                        color: AppColor.darkPink,
-                        fit: BoxFit.contain,
+                          Text(
+                            book.title,
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Text(
+                            book.author,
+                            style: TextStyle(
+                                fontSize: 16,
+                                color: AppColor.green,
+                                fontWeight: FontWeight.w500),
+                          )
+                        ],
                       ),
-                    )
-                  ],
+                      SizedBox(
+                        height: 45,
+                        width: 45,
+                        child: Image(
+                          image: const Svg("assets/icons/bookmark-circle.svg"),
+                          color: AppColor.darkPink,
+                          fit: BoxFit.contain,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
                 SizedBox(
                   height: size.height * .03,
@@ -130,8 +133,13 @@ class BookDetailPage extends StatelessWidget {
                 SizedBox(
                   height: size.height * .03,
                 ),
-                const Text(
-                    "This is a very interesting book. Many have claimed this is one of the best books ever. Highly recommended if you are looking for a great adventure."),
+                SizedBox(
+                  height: size.height * .10,
+                  child: const Center(
+                    child: Text(
+                        "This is a very interesting book. Many have claimed this is one of the best books ever. Highly recommended if you are looking for a great adventure."),
+                  ),
+                ),
                 SizedBox(
                   height: size.height * .03,
                 ),
