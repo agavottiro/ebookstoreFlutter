@@ -14,6 +14,13 @@ enum CartScreenState {
   failure,
 }
 
+enum PurchasedScreenState {
+  none,
+  loading,
+  success,
+  failure,
+}
+
 enum AdminScreenState {
   none,
   loading,
@@ -31,6 +38,7 @@ class EBookStoreState extends Equatable {
   final List<BookModel> cart;
   final ExploreScreenState exploreScreenState;
   final CartScreenState cartScreenState;
+  final PurchasedScreenState purchasedScreenState;
   final AdminScreenState adminScreenState;
 
   const EBookStoreState({
@@ -42,18 +50,21 @@ class EBookStoreState extends Equatable {
     required this.exploreScreenState,
     required this.cartScreenState,
     required this.adminScreenState,
+    required this.purchasedScreenState,
   });
 
   factory EBookStoreState.initial() {
     return const EBookStoreState(
-        allBooks: [],
-        purshasedBooks: [],
-        trendingBooks: [],
-        bookmarked: [],
-        cart: [],
-        exploreScreenState: ExploreScreenState.none,
-        cartScreenState: CartScreenState.none,
-        adminScreenState: AdminScreenState.none);
+      allBooks: [],
+      purshasedBooks: [],
+      trendingBooks: [],
+      bookmarked: [],
+      cart: [],
+      exploreScreenState: ExploreScreenState.none,
+      cartScreenState: CartScreenState.none,
+      adminScreenState: AdminScreenState.none,
+      purchasedScreenState: PurchasedScreenState.none,
+    );
   }
 
   EBookStoreState copyWith({
@@ -65,6 +76,7 @@ class EBookStoreState extends Equatable {
     ExploreScreenState? exploreScreenState,
     CartScreenState? cartScreenState,
     AdminScreenState? adminScreenState,
+    PurchasedScreenState? purchasedScreenState,
   }) {
     return EBookStoreState(
       allBooks: allBooks ?? this.allBooks,
@@ -75,6 +87,7 @@ class EBookStoreState extends Equatable {
       exploreScreenState: exploreScreenState ?? this.exploreScreenState,
       cartScreenState: cartScreenState ?? this.cartScreenState,
       adminScreenState: adminScreenState ?? this.adminScreenState,
+      purchasedScreenState: purchasedScreenState ?? this.purchasedScreenState,
     );
   }
 
@@ -88,5 +101,6 @@ class EBookStoreState extends Equatable {
         exploreScreenState,
         cartScreenState,
         adminScreenState,
+        purchasedScreenState,
       ];
 }

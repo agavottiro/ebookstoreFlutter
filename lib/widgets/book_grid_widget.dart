@@ -2,7 +2,6 @@ import 'package:ebook_store_ag/model/book_model.dart';
 import 'package:ebook_store_ag/pages/book_detail_page.dart';
 import 'package:ebook_store_ag/widgets/app_colors.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class BookGridWidget extends StatelessWidget {
   final BookModel book;

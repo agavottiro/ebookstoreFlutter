@@ -76,7 +76,6 @@ class _ManageBookPageState extends State<ManageBookPage> {
       backgroundColor: AppColor.backgroundGreen,
       appBar: AppBarWidget(
         title: widget.isEditMode ? "Edit book" : "Add book",
-        image: const Svg("assets/icons/settings.svg"),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),

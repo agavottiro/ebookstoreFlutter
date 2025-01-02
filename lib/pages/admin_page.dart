@@ -15,7 +15,7 @@ class AdminPage extends StatelessWidget {
       backgroundColor: AppColor.backgroundGreen,
       appBar: const AppBarWidget(
         title: "Admin Dashboard",
-        image: Svg("assets/icons/settings.svg"),
+        cartDisable: true,
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => Navigator.push(context,

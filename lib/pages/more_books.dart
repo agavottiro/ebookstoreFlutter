@@ -4,7 +4,6 @@ import 'package:ebook_store_ag/widgets/app_colors.dart';
 import 'package:ebook_store_ag/widgets/book_grid_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 
 class MoreBooks extends StatelessWidget {
   const MoreBooks({super.key});
@@ -16,7 +15,6 @@ class MoreBooks extends StatelessWidget {
       backgroundColor: AppColor.backgroundGreen,
       appBar: const AppBarWidget(
         title: 'More books',
-        image: Svg("assets/icons/more.svg"),
       ),
       body: Expanded(child: BlocBuilder<EBookStoreBloc, EBookStoreState>(
           builder: (context, state) {

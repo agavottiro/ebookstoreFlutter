@@ -1,15 +1,16 @@
 import 'package:ebook_store_ag/widgets/app_colors.dart';
+import 'package:ebook_store_ag/widgets/cart_icon_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 
 class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
   final String title;
-  final ImageProvider image;
+  final bool cartDisable;
 
   const AppBarWidget({
     super.key,
     required this.title,
-    required this.image,
+    this.cartDisable = false,
   });
 
   @override
@@ -35,12 +36,8 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
       )),
       actions: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(0, 8, 16, 8),
-          child: Image(
-            image: image,
-            color: AppColor.darkPink,
-          ),
-        )
+            padding: const EdgeInsets.fromLTRB(0, 8, 16, 8),
+            child: cartDisable ? SizedBox.shrink() : CartIconWidget())
       ],
     );
   }

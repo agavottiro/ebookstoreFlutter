@@ -1,9 +1,9 @@
 import 'package:ebook_store_ag/pages/admin_page.dart';
 import 'package:ebook_store_ag/pages/bloc/e_book_store_bloc.dart';
-import 'package:ebook_store_ag/pages/cart_page.dart';
 import 'package:ebook_store_ag/pages/more_books.dart';
 import 'package:ebook_store_ag/widgets/app_colors.dart';
 import 'package:ebook_store_ag/widgets/book_grid_widget.dart';
+import 'package:ebook_store_ag/widgets/cart_icon_widget.dart';
 import 'package:ebook_store_ag/widgets/continue_reading_widget.dart';
 import 'package:ebook_store_ag/widgets/search_bar_widget.dart';
 import 'package:flutter/material.dart';
@@ -50,17 +50,7 @@ class Body extends StatelessWidget {
                 ),
                 Row(
                   children: [
-                    GestureDetector(
-                      onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const CartPage())),
-                      child: Image(
-                        image: const Svg("assets/icons/bag.svg"),
-                        color: AppColor.darkPink,
-                        height: 35,
-                      ),
-                    ),
+                    const CartIconWidget(),
                     const SizedBox(
                       width: 20,
                     ),

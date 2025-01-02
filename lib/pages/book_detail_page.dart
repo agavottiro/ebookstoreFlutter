@@ -24,7 +24,6 @@ class _BookDetailPageState extends State<BookDetailPage> {
       backgroundColor: AppColor.backgroundGreen,
       appBar: const AppBarWidget(
         title: "Book Detail",
-        image: Svg("assets/icons/share.svg"),
       ),
       body: BlocBuilder<EBookStoreBloc, EBookStoreState>(
         builder: (context, state) {

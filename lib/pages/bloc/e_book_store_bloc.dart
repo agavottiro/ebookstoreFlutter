@@ -43,6 +43,9 @@ class EBookStoreBloc extends Bloc<EBookStoreEvent, EBookStoreState> {
     final response = await dio.get("$allBooksUrl.json");
     final data = response.data as Map<String, dynamic>?;
 
+    final responseCart = await dio.get("$cartUrl.json");
+    final dataCart = responseCart.data as Map<String, dynamic>?;
+
     if (data == null) {
       emit(state
           .copyWith(exploreScreenState: ExploreScreenState.none, allBooks: []));
@@ -59,12 +62,61 @@ class EBookStoreBloc extends Bloc<EBookStoreEvent, EBookStoreState> {
           imageUrl: book["imageUrl"]);
     }).toList();
 
+    List<BookModel> cartListItems = [];
+    if (dataCart != null) {
+      cartListItems = dataCart.entries.map((b) {
+        final cartBook = b.value;
+        final existingBook = books.firstWhere(
+          (book) => book.id == b.key,
+          orElse: () => BookModel(
+            id: b.key,
+            title: cartBook["title"],
+            price: double.parse(cartBook["price"].toString()),
+            author: cartBook["author"],
+            imageUrl: cartBook["imageUrl"],
+            quantity: 1,
+          ),
+        );
+
+        return existingBook.copyWith(quantity: cartBook["quantity"] ?? 1);
+      }).toList();
+    }
+
     emit(state.copyWith(
-        exploreScreenState: ExploreScreenState.success, allBooks: books));
+      exploreScreenState: ExploreScreenState.success,
+      allBooks: books,
+      cart: cartListItems,
+    ));
   }
 
   void _onLoadPurchasedBooksEvent(
-      LoadPurchasedBooksEvent event, Emitter<EBookStoreState> emit) {}
+      LoadPurchasedBooksEvent event, Emitter<EBookStoreState> emit) async {
+    emit(state.copyWith(purchasedScreenState: PurchasedScreenState.loading));
+
+    final response = await dio.get("$purchasedUrl.json");
+    final data = response.data as Map<String, dynamic>?;
+
+    if (data == null) {
+      emit(state.copyWith(
+          purchasedScreenState: PurchasedScreenState.none, purshasedBooks: []));
+      return;
+    }
+
+    final books = data.entries.map((b) {
+      final book = b.value;
+      return BookModel(
+          id: book["id"],
+          title: book["title"],
+          author: book["author"],
+          price: double.parse(book["price"].toString()),
+          imageUrl: book["imageUrl"]);
+    }).toList();
+
+    emit(state.copyWith(
+      purchasedScreenState: PurchasedScreenState.success,
+      purshasedBooks: books,
+    ));
+  }
 
   void _onAddToCartEvent(
       AddToCartEvent event, Emitter<EBookStoreState> emit) async {
@@ -178,19 +230,35 @@ class EBookStoreBloc extends Bloc<EBookStoreEvent, EBookStoreState> {
       return;
     }
 
+    final currentCart = state.cart;
+
     final cartBooks = data.entries.map((b) {
       final book = b.value;
 
-      return BookModel(
+      final existingBook = currentCart.firstWhere(
+        (item) => item.id == book["id"],
+        orElse: () => BookModel(
           id: book["id"],
           title: book["title"],
           author: book["author"],
           price: book["price"].toDouble(),
-          imageUrl: book["imageUrl"]);
+          imageUrl: book["imageUrl"],
+          quantity: 1,
+        ),
+      );
+
+      return existingBook.copyWith(
+        title: book["title"],
+        author: book["author"],
+        price: book["price"].toDouble(),
+        imageUrl: book["imageUrl"],
+      );
     }).toList();
 
     emit(state.copyWith(
-        cartScreenState: CartScreenState.success, cart: cartBooks));
+      cartScreenState: CartScreenState.success,
+      cart: cartBooks,
+    ));
   }
 
   void _onCreateNewBookEvent(
