@@ -27,6 +27,7 @@ class Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.read<EBookStoreBloc>().add(LoadCurrentlyReadingBookEvent());
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: AppColor.backgroundGreen,
@@ -95,7 +96,7 @@ class Body extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
             child: SizedBox(
-              height: size.height * .45,
+              height: size.height * .40,
               child: BlocBuilder<EBookStoreBloc, EBookStoreState>(
                 builder: (context, state) {
                   if (state.exploreScreenState == ExploreScreenState.loading) {
@@ -118,7 +119,7 @@ class Body extends StatelessWidget {
                           final book = state.allBooks[index];
                           return BookGridWidget(
                             book: book,
-                            height: size.height * .32,
+                            height: size.height * .29,
                           );
                         }),
                   );
@@ -126,7 +127,41 @@ class Body extends StatelessWidget {
               ),
             ),
           ),
-          const Expanded(child: ContinueReadingWidget()),
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
+                ),
+                color: AppColor.green,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 16),
+                      child: Text(
+                        "Continue Reading",
+                        style: TextStyle(
+                            fontSize: 16,
+                            color: AppColor.backgroundGreen,
+                            fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                    BlocBuilder<EBookStoreBloc, EBookStoreState>(
+                      builder: (context, state) {
+                        return ContinueReadingWidget(
+                            book: state.currentlyReadingBook);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );

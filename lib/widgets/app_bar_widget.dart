@@ -1,3 +1,4 @@
+import 'package:ebook_store_ag/pages/main_page.dart';
 import 'package:ebook_store_ag/widgets/app_colors.dart';
 import 'package:ebook_store_ag/widgets/cart_icon_widget.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +22,14 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
         padding: const EdgeInsets.fromLTRB(16, 8, 0, 8),
         child: GestureDetector(
           onTap: () {
-            Navigator.pop(context);
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            } else {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const MainPage()),
+              );
+            }
           },
           child: Image(
             image: const Svg("assets/icons/back.svg"),

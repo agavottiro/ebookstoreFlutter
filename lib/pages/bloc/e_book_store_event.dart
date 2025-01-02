@@ -11,6 +11,8 @@ class LoadAllBooksEvent extends EBookStoreEvent {}
 
 class LoadPurchasedBooksEvent extends EBookStoreEvent {}
 
+class LoadCurrentlyReadingBookEvent extends EBookStoreEvent {}
+
 class AddToCartEvent extends EBookStoreEvent {
   final BookModel book;
 
@@ -68,12 +70,14 @@ class CreateNewBookEvent extends EBookStoreEvent {
   final String author;
   final double price;
   final String imageUrl;
+  final bool isFavorite;
 
   const CreateNewBookEvent({
     required this.title,
     required this.author,
     required this.price,
     required this.imageUrl,
+    this.isFavorite = false,
   });
 }
 

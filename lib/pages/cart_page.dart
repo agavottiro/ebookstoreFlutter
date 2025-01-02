@@ -160,28 +160,27 @@ class CartPage extends StatelessWidget {
                                 }),
                           ),
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                            child: GestureDetector(
-                              onTap: () {
+                            padding: const EdgeInsets.all(16),
+                            child: ElevatedButton(
+                              onPressed: () {
                                 context
                                     .read<EBookStoreBloc>()
                                     .add(CheckoutEvent(books: state.cart));
                               },
-                              child: Container(
-                                  width: double.infinity,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    color: AppColor.green,
-                                    borderRadius: BorderRadius.circular(8),
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    WidgetStateProperty.all(AppColor.green),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  "Checkout",
+                                  style: TextStyle(
+                                    color: AppColor.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w800,
                                   ),
-                                  child: Center(
-                                      child: Text(
-                                    "Checkout",
-                                    style: TextStyle(
-                                        color: AppColor.white,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w800),
-                                  ))),
+                                ),
+                              ),
                             ),
                           )
                         ],

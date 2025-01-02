@@ -13,8 +13,8 @@ const cartUrl =
     "https://beca-flutter-ag-default-rtdb.firebaseio.com/ebookStore/cart";
 const purchasedUrl =
     "https://beca-flutter-ag-default-rtdb.firebaseio.com/ebookStore/purchasedBooks";
-const favoritesUrl =
-    "https://beca-flutter-ag-default-rtdb.firebaseio.com/ebookStore/favoriteBooks";
+const currentlyReadingUrl =
+    "https://beca-flutter-ag-default-rtdb.firebaseio.com/ebookStore/currentlyReading";
 
 class EBookStoreBloc extends Bloc<EBookStoreEvent, EBookStoreState> {
   var uuid = Uuid();
@@ -34,6 +34,7 @@ class EBookStoreBloc extends Bloc<EBookStoreEvent, EBookStoreState> {
     on<LoadCartItemsEvent>(_onLoadCartItemsEvent);
     on<CreateNewBookEvent>(_onCreateNewBookEvent);
     on<EditBookEvent>(_onEditBookEvent);
+    on<LoadCurrentlyReadingBookEvent>(_onLoadCurrentlyReadingBookEvent);
   }
 
   void _onLoadAllBooksEvent(
@@ -46,20 +47,29 @@ class EBookStoreBloc extends Bloc<EBookStoreEvent, EBookStoreState> {
     final responseCart = await dio.get("$cartUrl.json");
     final dataCart = responseCart.data as Map<String, dynamic>?;
 
+    final responseCurrentlyReading = await dio.get("$currentlyReadingUrl.json");
+    final dataCurrentlyReading =
+        responseCurrentlyReading.data as Map<String, dynamic>?;
+
     if (data == null) {
-      emit(state
-          .copyWith(exploreScreenState: ExploreScreenState.none, allBooks: []));
+      emit(state.copyWith(
+        exploreScreenState: ExploreScreenState.none,
+        allBooks: [],
+        currentlyReadingBooks: [],
+      ));
       return;
     }
 
     final books = data.entries.map((b) {
       final book = b.value;
       return BookModel(
-          id: book["id"],
-          title: book["title"],
-          author: book["author"],
-          price: double.parse(book["price"].toString()),
-          imageUrl: book["imageUrl"]);
+        id: book["id"],
+        title: book["title"],
+        author: book["author"],
+        price: double.parse(book["price"].toString()),
+        imageUrl: book["imageUrl"],
+        isFavorite: book["isFavorite"] ?? false,
+      );
     }).toList();
 
     List<BookModel> cartListItems = [];
@@ -77,8 +87,29 @@ class EBookStoreBloc extends Bloc<EBookStoreEvent, EBookStoreState> {
             quantity: 1,
           ),
         );
-
         return existingBook.copyWith(quantity: cartBook["quantity"] ?? 1);
+      }).toList();
+    }
+
+    List<BookModel> currentlyReadingBooks = [];
+    BookModel? currentlyReadingBook;
+    if (dataCurrentlyReading != null) {
+      currentlyReadingBooks = dataCurrentlyReading.entries.map((b) {
+        final book = b.value;
+        final bookModel = BookModel(
+          id: book["id"],
+          title: book["title"],
+          author: book["author"],
+          price: double.parse(book["price"].toString()),
+          imageUrl: book["imageUrl"],
+          currentlyReading: book["currentlyReading"] ?? false,
+        );
+
+        if (bookModel.currentlyReading) {
+          currentlyReadingBook = bookModel;
+        }
+
+        return bookModel;
       }).toList();
     }
 
@@ -86,6 +117,8 @@ class EBookStoreBloc extends Bloc<EBookStoreEvent, EBookStoreState> {
       exploreScreenState: ExploreScreenState.success,
       allBooks: books,
       cart: cartListItems,
+      currentlyReadingBooks: currentlyReadingBooks,
+      currentlyReadingBook: currentlyReadingBook,
     ));
   }
 
@@ -186,10 +219,81 @@ class EBookStoreBloc extends Bloc<EBookStoreEvent, EBookStoreState> {
     }
   }
 
-  void _onBookmarkEvent(BookmarkEvent event, Emitter<EBookStoreState> emit) {}
+  void _onBookmarkEvent(
+      BookmarkEvent event, Emitter<EBookStoreState> emit) async {
+    final book = event.book;
+
+    final updatedBook = book.copyWith(isFavorite: !book.isFavorite);
+
+    final updatedBooks = state.allBooks.map((b) {
+      return b.id == book.id ? updatedBook : b;
+    }).toList();
+
+    final updatedBookData = {
+      "id": updatedBook.id,
+      "title": updatedBook.title,
+      "author": updatedBook.author,
+      "price": updatedBook.price,
+      "imageUrl": updatedBook.imageUrl,
+      "isFavorite": updatedBook.isFavorite,
+    };
+
+    await dio.patch("$allBooksUrl/${updatedBook.id}.json",
+        data: updatedBookData);
+
+    emit(state.copyWith(allBooks: updatedBooks));
+  }
 
   void _onCurrentlyReadingEvent(
-      CurrentlyReadingEvent event, Emitter<EBookStoreState> emit) {}
+    CurrentlyReadingEvent event,
+    Emitter<EBookStoreState> emit,
+  ) async {
+    final updatedCurrentlyReadingBooks =
+        state.currentlyReadingBooks.map((book) {
+      return book.copyWith(currentlyReading: false);
+    }).toList();
+
+    final BookModel newCurrentlyReadingBook =
+        event.book.copyWith(currentlyReading: true);
+
+    updatedCurrentlyReadingBooks.add(newCurrentlyReadingBook);
+
+    for (var book in updatedCurrentlyReadingBooks) {
+      if (!book.currentlyReading) {
+        await dio.put(
+          "$currentlyReadingUrl/${book.id}.json",
+          data: {
+            "id": book.id,
+            "title": book.title,
+            "author": book.author,
+            "price": book.price,
+            "imageUrl": book.imageUrl,
+            "currentlyReading": false,
+            "isFavorite": book.isFavorite,
+          },
+        );
+      }
+    }
+
+    await dio.put(
+      "$currentlyReadingUrl/${newCurrentlyReadingBook.id}.json",
+      data: {
+        "id": newCurrentlyReadingBook.id,
+        "title": newCurrentlyReadingBook.title,
+        "author": newCurrentlyReadingBook.author,
+        "price": newCurrentlyReadingBook.price,
+        "imageUrl": newCurrentlyReadingBook.imageUrl,
+        "currentlyReading": true,
+        "isFavorite": newCurrentlyReadingBook.isFavorite,
+      },
+    );
+
+    emit(state.copyWith(
+      currentlyReadingBooks: updatedCurrentlyReadingBooks,
+      currentlyReadingBook: newCurrentlyReadingBook,
+      currentlyReadingState: CurrentlyReadingState.success,
+    ));
+  }
 
   void _onRemoveBookEvent(
       RemoveBookEvent event, Emitter<EBookStoreState> emit) async {
@@ -272,7 +376,8 @@ class EBookStoreBloc extends Bloc<EBookStoreEvent, EBookStoreState> {
       "title": event.title,
       "author": event.author,
       "imageUrl": event.imageUrl,
-      "price": event.price
+      "price": event.price,
+      "isFavorite": event.isFavorite,
     };
 
     await dio.put("$allBooksUrl/$bookUID.json", data: data);
@@ -283,6 +388,7 @@ class EBookStoreBloc extends Bloc<EBookStoreEvent, EBookStoreState> {
       author: event.author,
       price: double.parse(event.price.toString()),
       imageUrl: event.imageUrl,
+      isFavorite: event.isFavorite,
     );
 
     final updatedBooks = [...state.allBooks, newBook];
@@ -366,6 +472,50 @@ class EBookStoreBloc extends Bloc<EBookStoreEvent, EBookStoreState> {
     emit(state.copyWith(
       cart: [],
       cartScreenState: CartScreenState.none,
+    ));
+  }
+
+  void _onLoadCurrentlyReadingBookEvent(LoadCurrentlyReadingBookEvent event,
+      Emitter<EBookStoreState> emit) async {
+    emit(state.copyWith(currentlyReadingState: CurrentlyReadingState.loading));
+
+    final response = await dio.get("$currentlyReadingUrl.json");
+
+    if (response.data == null || response.data.isEmpty) {
+      emit(state.copyWith(
+        currentlyReadingState: CurrentlyReadingState.none,
+        currentlyReadingBooks: [],
+        currentlyReadingBook: null,
+      ));
+      return;
+    }
+
+    final bookData = response.data as Map<String, dynamic>;
+    final List<BookModel> books = bookData.entries.map((entry) {
+      final value = entry.value;
+      return BookModel(
+        id: value["id"],
+        title: value["title"],
+        author: value["author"],
+        price: value["price"] ?? 0.0,
+        imageUrl: value["imageUrl"] ?? "",
+        currentlyReading: value["currentlyReading"] ?? false,
+      );
+    }).toList();
+
+    // Encontramos el libro marcado como currentlyReading
+    BookModel? currentlyReadingBook;
+
+    try {
+      currentlyReadingBook = books.firstWhere((book) => book.currentlyReading);
+    } catch (e) {
+      currentlyReadingBook = null; // Si no hay ninguno, asignamos null.
+    }
+
+    emit(state.copyWith(
+      currentlyReadingState: CurrentlyReadingState.success,
+      currentlyReadingBooks: books,
+      currentlyReadingBook: currentlyReadingBook,
     ));
   }
 }

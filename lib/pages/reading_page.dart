@@ -1,5 +1,4 @@
 import 'package:ebook_store_ag/pages/bloc/e_book_store_bloc.dart';
-import 'package:ebook_store_ag/widgets/app_bar_widget.dart';
 import 'package:ebook_store_ag/widgets/app_colors.dart';
 import 'package:ebook_store_ag/widgets/book_list_widget.dart';
 import 'package:flutter/material.dart';
@@ -11,10 +10,26 @@ class ReadingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     context.read<EBookStoreBloc>().add(LoadPurchasedBooksEvent());
+    context.read<EBookStoreBloc>().add(LoadCurrentlyReadingBookEvent());
+    return BlocProvider.value(
+        value: context.read<EBookStoreBloc>(), child: const ReadingBody());
+  }
+}
+
+class ReadingBody extends StatelessWidget {
+  const ReadingBody({super.key});
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const AppBarWidget(
-        title: "My books",
-        cartDisable: true,
+      appBar: AppBar(
+        title: Center(
+            child: Text(
+          "My books",
+          style:
+              TextStyle(color: AppColor.darkPink, fontWeight: FontWeight.w700),
+        )),
+        backgroundColor: AppColor.green,
       ),
       backgroundColor: AppColor.green,
       body: BlocBuilder<EBookStoreBloc, EBookStoreState>(
@@ -23,10 +38,10 @@ class ReadingPage extends StatelessWidget {
               ? const Center(
                   child: CircularProgressIndicator(),
                 )
-              : state.cart.isEmpty
+              : state.purshasedBooks.isEmpty
                   ? Center(
                       child: Text(
-                        "No books on the cart yet",
+                        "No books purchased yet",
                         style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.w600,
@@ -37,10 +52,15 @@ class ReadingPage extends StatelessWidget {
                       itemCount: state.purshasedBooks.length,
                       itemBuilder: (context, index) {
                         final book = state.purshasedBooks[index];
+                        final isCurrentlyReading = state.currentlyReadingBooks
+                            .any((b) => b.id == book.id);
                         return Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.only(left: 8, right: 8),
                           child: BookListWidget(
-                              book: book, readingState: "Reading"),
+                            book: book,
+                            initialReadingState:
+                                isCurrentlyReading ? 'Reading' : 'startReading',
+                          ),
                         );
                       });
         },

@@ -19,6 +19,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
   int selectedQuantity = 1;
   @override
   Widget build(BuildContext context) {
+    context.read<EBookStoreBloc>().add(LoadAllBooksEvent());
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: AppColor.backgroundGreen,
@@ -77,13 +78,23 @@ class _BookDetailPageState extends State<BookDetailPage> {
                           )
                         ],
                       ),
-                      SizedBox(
-                        height: 45,
-                        width: 45,
-                        child: Image(
-                          image: const Svg("assets/icons/bookmark-circle.svg"),
-                          color: AppColor.darkPink,
-                          fit: BoxFit.contain,
+                      GestureDetector(
+                        onTap: () {
+                          context
+                              .read<EBookStoreBloc>()
+                              .add(BookmarkEvent(book: widget.book));
+                        },
+                        child: SizedBox(
+                          height: 45,
+                          width: 45,
+                          child: Image(
+                            image:
+                                const Svg("assets/icons/bookmark-circle.svg"),
+                            color: widget.book.isFavorite
+                                ? AppColor.darkPink
+                                : AppColor.lightGreen,
+                            fit: BoxFit.contain,
+                          ),
                         ),
                       )
                     ],
@@ -169,27 +180,23 @@ class _BookDetailPageState extends State<BookDetailPage> {
                         });
                       },
                     ),
-                    GestureDetector(
-                      onTap: () {
+                    ElevatedButton(
+                      onPressed: () {
                         context.read<EBookStoreBloc>().add(AddToCartEvent(
                             book: widget.book
                                 .copyWith(quantity: selectedQuantity)));
                       },
-                      child: Container(
-                        width: size.width * .3,
-                        height: 40,
-                        decoration: BoxDecoration(
-                            color: AppColor.darkPink,
-                            borderRadius: BorderRadius.circular(8)),
-                        child: Center(
-                            child: Text(
-                          "Add to cart",
-                          style: TextStyle(
-                              color: AppColor.lightGreen,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700),
-                        )),
-                      ),
+                      style: ButtonStyle(
+                          backgroundColor:
+                              WidgetStatePropertyAll(AppColor.darkPink)),
+                      child: Center(
+                          child: Text(
+                        "Add to cart",
+                        style: TextStyle(
+                            color: AppColor.lightGreen,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700),
+                      )),
                     )
                   ],
                 )

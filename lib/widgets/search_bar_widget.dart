@@ -1,4 +1,5 @@
 import 'package:ebook_store_ag/widgets/app_colors.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class SearchBarWidget extends StatelessWidget {
@@ -6,12 +7,18 @@ class SearchBarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    TextEditingController _controller = TextEditingController();
     return Padding(
       padding: const EdgeInsets.only(left: 16, right: 16),
-      child: Container(
-        height: size.height * .10,
-        color: AppColor.darkPink,
+      child: SearchBar(
+        controller: _controller,
+        leading: Icon(
+          Icons.search,
+          color: AppColor.green,
+        ),
+        hintText: "Search",
+        enabled: false,
+        backgroundColor: WidgetStateProperty.all(AppColor.lightPink),
       ),
     );
   }

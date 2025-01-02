@@ -4,7 +4,6 @@ import 'package:ebook_store_ag/widgets/app_bar_widget.dart';
 import 'package:ebook_store_ag/widgets/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 
 class ManageBookPage extends StatefulWidget {
   final BookModel? bookModel;
