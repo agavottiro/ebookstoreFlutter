@@ -2,14 +2,21 @@ import 'package:ebook_store_ag/model/book_model.dart';
 import 'package:ebook_store_ag/pages/bloc/e_book_store_bloc.dart';
 import 'package:ebook_store_ag/widgets/app_bar_widget.dart';
 import 'package:ebook_store_ag/widgets/app_colors.dart';
+import 'package:ebook_store_ag/widgets/quantity_handler_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 
-class BookDetailPage extends StatelessWidget {
+class BookDetailPage extends StatefulWidget {
   final BookModel book;
   const BookDetailPage({super.key, required this.book});
 
+  @override
+  State<BookDetailPage> createState() => _BookDetailPageState();
+}
+
+class _BookDetailPageState extends State<BookDetailPage> {
+  int selectedQuantity = 1;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -32,7 +39,7 @@ class BookDetailPage extends StatelessWidget {
                     width: size.width * .45,
                     decoration: BoxDecoration(
                         image: DecorationImage(
-                            image: NetworkImage(book.imageUrl),
+                            image: NetworkImage(widget.book.imageUrl),
                             fit: BoxFit.fill),
                         borderRadius: BorderRadius.circular(15)),
                   ),
@@ -49,21 +56,21 @@ class BookDetailPage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "\$ ${book.price.toString()}",
+                            "\$ ${widget.book.price.toString()}",
                             style: TextStyle(
                                 fontSize: 20,
                                 color: AppColor.darkPink,
                                 fontWeight: FontWeight.w700),
                           ),
                           Text(
-                            book.title,
+                            widget.book.title,
                             style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                           Text(
-                            book.author,
+                            widget.book.author,
                             style: TextStyle(
                                 fontSize: 16,
                                 color: AppColor.green,
@@ -154,50 +161,20 @@ class BookDetailPage extends StatelessWidget {
                           "QTY",
                           style: TextStyle(fontSize: 16),
                         ))),
-                    Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () {},
-                          child: Container(
-                            width: 40,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: AppColor.backgroundGreen),
-                            child: Text(
-                              "-",
-                              style: TextStyle(
-                                  color: AppColor.black, fontSize: 30),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                        Text(
-                          book.quantity.toString(),
-                          style: TextStyle(fontSize: 20),
-                        ),
-                        GestureDetector(
-                          onTap: () {},
-                          child: Container(
-                            width: 40,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: AppColor.backgroundGreen),
-                            child: Center(
-                              child: Text(
-                                "+",
-                                style: TextStyle(
-                                    color: AppColor.black, fontSize: 24),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                    QuantityHandlerWidget(
+                      initialQuantity: selectedQuantity,
+                      maxQuantity: 5,
+                      onQuantityChanged: (newQuantity) {
+                        setState(() {
+                          selectedQuantity = newQuantity;
+                        });
+                      },
                     ),
                     GestureDetector(
                       onTap: () {
-                        context
-                            .read<EBookStoreBloc>()
-                            .add(AddToCardEvent(book: book));
+                        context.read<EBookStoreBloc>().add(AddToCartEvent(
+                            book: widget.book
+                                .copyWith(quantity: selectedQuantity)));
                       },
                       child: Container(
                         width: size.width * .3,

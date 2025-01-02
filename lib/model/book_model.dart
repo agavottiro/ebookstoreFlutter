@@ -7,6 +7,8 @@ class BookModel extends Equatable {
   final double price;
   final String imageUrl;
   final int quantity;
+  final bool currentlyReading;
+  final bool isFavorite;
 
   const BookModel({
     required this.id,
@@ -15,6 +17,8 @@ class BookModel extends Equatable {
     required this.price,
     required this.imageUrl,
     this.quantity = 1,
+    this.currentlyReading = false,
+    this.isFavorite = false,
   });
 
   BookModel copyWith({
@@ -24,6 +28,8 @@ class BookModel extends Equatable {
     double? price,
     String? imageUrl,
     int? quantity,
+    bool? currentlyReading,
+    bool? isFavorite,
   }) {
     return BookModel(
       id: id ?? this.id,
@@ -32,6 +38,8 @@ class BookModel extends Equatable {
       price: price ?? this.price,
       imageUrl: imageUrl ?? this.imageUrl,
       quantity: quantity ?? this.quantity,
+      currentlyReading: currentlyReading ?? this.currentlyReading,
+      isFavorite: isFavorite ?? this.isFavorite,
     );
   }
 
@@ -43,5 +51,7 @@ class BookModel extends Equatable {
         price,
         imageUrl,
         quantity,
+        currentlyReading,
+        isFavorite,
       ];
 }

@@ -29,6 +29,7 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: AppColor.green,
       body: _pages[selectedIndex],
@@ -43,7 +44,7 @@ class _MainPageState extends State<MainPage> {
             ),
           ),
           width: double.infinity,
-          height: 80,
+          height: size.width * .18,
           child: Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -86,7 +87,7 @@ Widget _itemBottomMenu({
         children: [
           Image(
               image: image,
-              height: 25,
+              height: 20,
               color: isActive ? AppColor.darkPink : AppColor.green),
           Text(
             title,

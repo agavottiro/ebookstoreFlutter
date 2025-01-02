@@ -11,10 +11,10 @@ class LoadAllBooksEvent extends EBookStoreEvent {}
 
 class LoadPurchasedBooksEvent extends EBookStoreEvent {}
 
-class AddToCardEvent extends EBookStoreEvent {
+class AddToCartEvent extends EBookStoreEvent {
   final BookModel book;
 
-  const AddToCardEvent({required this.book});
+  const AddToCartEvent({required this.book});
 }
 
 class UpdateCartQuantityEvent extends EBookStoreEvent {
@@ -53,6 +53,12 @@ class RemoveCartItemEvent extends EBookStoreEvent {
   final BookModel book;
 
   const RemoveCartItemEvent({required this.book});
+}
+
+class CheckoutEvent extends EBookStoreEvent {
+  final List<BookModel> books;
+
+  const CheckoutEvent({required this.books});
 }
 
 class LoadCartItemsEvent extends EBookStoreEvent {}

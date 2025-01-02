@@ -103,9 +103,9 @@ class Body extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
+            padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
             child: SizedBox(
-              height: size.height * .40,
+              height: size.height * .45,
               child: BlocBuilder<EBookStoreBloc, EBookStoreState>(
                 builder: (context, state) {
                   if (state.exploreScreenState == ExploreScreenState.loading) {
@@ -128,7 +128,7 @@ class Body extends StatelessWidget {
                           final book = state.allBooks[index];
                           return BookGridWidget(
                             book: book,
-                            height: size.height * .27,
+                            height: size.height * .32,
                           );
                         }),
                   );

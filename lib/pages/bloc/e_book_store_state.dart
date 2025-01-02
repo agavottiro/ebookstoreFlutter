@@ -7,6 +7,13 @@ enum ExploreScreenState {
   failure,
 }
 
+enum CartScreenState {
+  none,
+  loading,
+  success,
+  failure,
+}
+
 enum AdminScreenState {
   none,
   loading,
@@ -23,6 +30,7 @@ class EBookStoreState extends Equatable {
   final List<BookModel> bookmarked;
   final List<BookModel> cart;
   final ExploreScreenState exploreScreenState;
+  final CartScreenState cartScreenState;
   final AdminScreenState adminScreenState;
 
   const EBookStoreState({
@@ -32,6 +40,7 @@ class EBookStoreState extends Equatable {
     required this.bookmarked,
     required this.cart,
     required this.exploreScreenState,
+    required this.cartScreenState,
     required this.adminScreenState,
   });
 
@@ -43,6 +52,7 @@ class EBookStoreState extends Equatable {
         bookmarked: [],
         cart: [],
         exploreScreenState: ExploreScreenState.none,
+        cartScreenState: CartScreenState.none,
         adminScreenState: AdminScreenState.none);
   }
 
@@ -53,6 +63,7 @@ class EBookStoreState extends Equatable {
     List<BookModel>? bookmarked,
     List<BookModel>? cart,
     ExploreScreenState? exploreScreenState,
+    CartScreenState? cartScreenState,
     AdminScreenState? adminScreenState,
   }) {
     return EBookStoreState(
@@ -62,6 +73,7 @@ class EBookStoreState extends Equatable {
       bookmarked: bookmarked ?? this.bookmarked,
       cart: cart ?? this.cart,
       exploreScreenState: exploreScreenState ?? this.exploreScreenState,
+      cartScreenState: cartScreenState ?? this.cartScreenState,
       adminScreenState: adminScreenState ?? this.adminScreenState,
     );
   }
@@ -74,6 +86,7 @@ class EBookStoreState extends Equatable {
         bookmarked,
         cart,
         exploreScreenState,
+        cartScreenState,
         adminScreenState,
       ];
 }

@@ -23,13 +23,14 @@ class EBookStoreBloc extends Bloc<EBookStoreEvent, EBookStoreState> {
   EBookStoreBloc() : super(EBookStoreState.initial()) {
     on<LoadAllBooksEvent>(_onLoadAllBooksEvent);
     on<LoadPurchasedBooksEvent>(_onLoadPurchasedBooksEvent);
-    on<AddToCardEvent>(_onAddToCardEvent);
+    on<AddToCartEvent>(_onAddToCartEvent);
     on<UpdateCartQuantityEvent>(_onUpdateCartQuantityEvent);
     on<BookmarkEvent>(_onBookmarkEvent);
     on<CurrentlyReadingEvent>(_onCurrentlyReadingEvent);
     on<RemoveBookEvent>(_onRemoveBookEvent);
     on<RemoveBookmarkedBookEvent>(_onRemoveBookmarkedBookEvent);
     on<RemoveCartItemEvent>(_onRemoveCartItemEvent);
+    on<CheckoutEvent>(_onCheckoutEvent);
     on<LoadCartItemsEvent>(_onLoadCartItemsEvent);
     on<CreateNewBookEvent>(_onCreateNewBookEvent);
     on<EditBookEvent>(_onEditBookEvent);
@@ -65,8 +66,8 @@ class EBookStoreBloc extends Bloc<EBookStoreEvent, EBookStoreState> {
   void _onLoadPurchasedBooksEvent(
       LoadPurchasedBooksEvent event, Emitter<EBookStoreState> emit) {}
 
-  void _onAddToCardEvent(
-      AddToCardEvent event, Emitter<EBookStoreState> emit) async {
+  void _onAddToCartEvent(
+      AddToCartEvent event, Emitter<EBookStoreState> emit) async {
     final book = event.book;
 
     final cartItem = {
@@ -74,21 +75,24 @@ class EBookStoreBloc extends Bloc<EBookStoreEvent, EBookStoreState> {
       "title": book.title,
       "author": book.author,
       "price": book.price,
-      "quantity": 1,
+      "imageUrl": book.imageUrl,
+      "quantity": book.quantity,
+      "currentlyReading": book.currentlyReading,
+      "isFavorite": book.isFavorite,
     };
 
     final itemExistsIndex = state.cart.indexWhere((b) => b.id == book.id);
 
     if (itemExistsIndex >= 0) {
       final bookItem = state.cart[itemExistsIndex];
-      final newQuantity = bookItem.quantity + 1;
+      final newQuantity = bookItem.quantity + book.quantity;
 
       await dio.patch(
         "$cartUrl/${book.id}.json",
         data: {"quantity": newQuantity},
       );
 
-      final updatedCart = [...state.cart, book];
+      final updatedCart = List.of(state.cart);
       updatedCart[itemExistsIndex] = bookItem.copyWith(quantity: newQuantity);
 
       emit(state.copyWith(cart: updatedCart));
@@ -151,10 +155,43 @@ class EBookStoreBloc extends Bloc<EBookStoreEvent, EBookStoreState> {
       RemoveBookmarkedBookEvent event, Emitter<EBookStoreState> emit) {}
 
   void _onRemoveCartItemEvent(
-      RemoveCartItemEvent event, Emitter<EBookStoreState> emit) {}
+      RemoveCartItemEvent event, Emitter<EBookStoreState> emit) async {
+    final BookModel book = event.book;
+
+    await dio.delete("$cartUrl/${book.id}.json");
+
+    final updatedCart = state.cart.where((b) => b.id != event.book.id).toList();
+
+    emit(state.copyWith(cart: updatedCart));
+  }
 
   void _onLoadCartItemsEvent(
-      LoadCartItemsEvent event, Emitter<EBookStoreState> emit) {}
+      LoadCartItemsEvent event, Emitter<EBookStoreState> emit) async {
+    emit(state.copyWith(cartScreenState: CartScreenState.loading));
+
+    final response = await dio.get("$cartUrl.json");
+
+    final data = response.data as Map<String, dynamic>?;
+
+    if (data == null) {
+      emit(state.copyWith(cartScreenState: CartScreenState.none, cart: []));
+      return;
+    }
+
+    final cartBooks = data.entries.map((b) {
+      final book = b.value;
+
+      return BookModel(
+          id: book["id"],
+          title: book["title"],
+          author: book["author"],
+          price: book["price"].toDouble(),
+          imageUrl: book["imageUrl"]);
+    }).toList();
+
+    emit(state.copyWith(
+        cartScreenState: CartScreenState.success, cart: cartBooks));
+  }
 
   void _onCreateNewBookEvent(
       CreateNewBookEvent event, Emitter<EBookStoreState> emit) async {
@@ -215,6 +252,52 @@ class EBookStoreBloc extends Bloc<EBookStoreEvent, EBookStoreState> {
     emit(state.copyWith(
       allBooks: updatedList,
       adminScreenState: AdminScreenState.bookUpdated,
+    ));
+  }
+
+  void _onCheckoutEvent(
+      CheckoutEvent event, Emitter<EBookStoreState> emit) async {
+    emit(state.copyWith(cartScreenState: CartScreenState.loading));
+
+    final response = await dio.get("$purchasedUrl.json");
+    final data = response.data as Map<String, dynamic>? ?? {};
+
+    final books = event.books
+        .where(
+          (book) => !data.containsKey(book.id),
+        )
+        .map(
+          (book) => book.copyWith(currentlyReading: false),
+        )
+        .toList();
+
+    final booksJson = Map.fromEntries(
+      books.map(
+        (book) => MapEntry(
+          book.id,
+          {
+            "id": book.id,
+            "title": book.title,
+            "author": book.author,
+            "price": book.price,
+            "quantity": book.quantity,
+            "imageUrl": book.imageUrl,
+            "currentlyReading": book.currentlyReading,
+            "isFavotite": book.isFavorite,
+          },
+        ),
+      ),
+    );
+
+    if (booksJson.isNotEmpty) {
+      await dio.patch("$purchasedUrl.json", data: booksJson);
+    }
+
+    await dio.delete("$cartUrl.json");
+
+    emit(state.copyWith(
+      cart: [],
+      cartScreenState: CartScreenState.none,
     ));
   }
 }
