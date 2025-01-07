@@ -503,13 +503,12 @@ class EBookStoreBloc extends Bloc<EBookStoreEvent, EBookStoreState> {
       );
     }).toList();
 
-    // Encontramos el libro marcado como currentlyReading
     BookModel? currentlyReadingBook;
 
     try {
       currentlyReadingBook = books.firstWhere((book) => book.currentlyReading);
     } catch (e) {
-      currentlyReadingBook = null; // Si no hay ninguno, asignamos null.
+      currentlyReadingBook = null;
     }
 
     emit(state.copyWith(
