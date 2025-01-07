@@ -195,7 +195,7 @@ class EBookStoreBloc extends Bloc<EBookStoreEvent, EBookStoreState> {
 
     final newQuantity = event.newQuantity;
 
-    if (newQuantity < 1 && newQuantity > 5) {
+    if (newQuantity < 1 || newQuantity > 5) {
       return;
     }
 

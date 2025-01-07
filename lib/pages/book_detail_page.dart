@@ -78,24 +78,32 @@ class _BookDetailPageState extends State<BookDetailPage> {
                           )
                         ],
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          context
-                              .read<EBookStoreBloc>()
-                              .add(BookmarkEvent(book: widget.book));
+                      BlocBuilder<EBookStoreBloc, EBookStoreState>(
+                        builder: (context, state) {
+                          final currentBook = state.allBooks.firstWhere(
+                            (b) => b.id == widget.book.id,
+                            orElse: () => widget.book,
+                          );
+                          return GestureDetector(
+                            onTap: () {
+                              context
+                                  .read<EBookStoreBloc>()
+                                  .add(BookmarkEvent(book: currentBook));
+                            },
+                            child: SizedBox(
+                              height: 45,
+                              width: 45,
+                              child: Image(
+                                image: const Svg(
+                                    "assets/icons/bookmark-circle.svg"),
+                                color: currentBook.isFavorite
+                                    ? AppColor.darkPink
+                                    : AppColor.lightGreen,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          );
                         },
-                        child: SizedBox(
-                          height: 45,
-                          width: 45,
-                          child: Image(
-                            image:
-                                const Svg("assets/icons/bookmark-circle.svg"),
-                            color: widget.book.isFavorite
-                                ? AppColor.darkPink
-                                : AppColor.lightGreen,
-                            fit: BoxFit.contain,
-                          ),
-                        ),
                       )
                     ],
                   ),

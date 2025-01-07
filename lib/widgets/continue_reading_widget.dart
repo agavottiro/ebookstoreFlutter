@@ -24,7 +24,7 @@ class ContinueReadingWidget extends StatelessWidget {
           child: book == null
               ? Center(
                   child: Text(
-                    "No book currently being read",
+                    "You're not reading any book right now",
                     style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,

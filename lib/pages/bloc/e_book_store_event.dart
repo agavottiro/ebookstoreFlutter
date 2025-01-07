@@ -23,8 +23,10 @@ class UpdateCartQuantityEvent extends EBookStoreEvent {
   final BookModel bookCart;
   final int newQuantity;
 
-  const UpdateCartQuantityEvent(
-      {required this.bookCart, required this.newQuantity});
+  const UpdateCartQuantityEvent({
+    required this.bookCart,
+    required this.newQuantity,
+  });
 }
 
 class BookmarkEvent extends EBookStoreEvent {

@@ -45,7 +45,7 @@ class ReadingBody extends StatelessWidget {
                         style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.w600,
-                            color: AppColor.green),
+                            color: AppColor.darkPink),
                       ),
                     )
                   : ListView.builder(

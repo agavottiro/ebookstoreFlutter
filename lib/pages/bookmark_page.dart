@@ -3,6 +3,7 @@ import 'package:ebook_store_ag/widgets/app_colors.dart';
 import 'package:ebook_store_ag/widgets/stars_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 
 class BookmarkPage extends StatelessWidget {
   const BookmarkPage({super.key});
@@ -14,7 +15,7 @@ class BookmarkPage extends StatelessWidget {
       appBar: AppBar(
         title: Center(
             child: Text(
-          "My books",
+          "Favorite books",
           style:
               TextStyle(color: AppColor.darkPink, fontWeight: FontWeight.w700),
         )),
@@ -32,7 +33,7 @@ class BookmarkPage extends StatelessWidget {
                     style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w600,
-                        color: AppColor.green),
+                        color: AppColor.darkPink),
                   ),
                 )
               : ListView.builder(
@@ -88,6 +89,29 @@ class BookmarkPage extends StatelessWidget {
                                   ),
                                 ),
                                 const SizedBox(width: 10),
+                                BlocBuilder<EBookStoreBloc, EBookStoreState>(
+                                  builder: (context, state) {
+                                    return GestureDetector(
+                                      onTap: () {
+                                        context
+                                            .read<EBookStoreBloc>()
+                                            .add(BookmarkEvent(book: book));
+                                      },
+                                      child: SizedBox(
+                                        height: 45,
+                                        width: 45,
+                                        child: Image(
+                                          image: const Svg(
+                                              "assets/icons/bookmark-circle.svg"),
+                                          color: book.isFavorite
+                                              ? AppColor.darkPink
+                                              : AppColor.lightGreen,
+                                          fit: BoxFit.contain,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                )
                               ],
                             ),
                           ),

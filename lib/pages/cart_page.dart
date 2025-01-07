@@ -122,7 +122,7 @@ class CartPage extends StatelessWidget {
                                                       QuantityHandlerWidget(
                                                         initialQuantity:
                                                             book.quantity,
-                                                        maxQuantity: 10,
+                                                        maxQuantity: 5,
                                                         onQuantityChanged:
                                                             (newQuantity) {
                                                           context
@@ -130,10 +130,11 @@ class CartPage extends StatelessWidget {
                                                                   EBookStoreBloc>()
                                                               .add(
                                                                 UpdateCartQuantityEvent(
-                                                                    bookCart:
-                                                                        book,
-                                                                    newQuantity:
-                                                                        newQuantity),
+                                                                  bookCart:
+                                                                      book,
+                                                                  newQuantity:
+                                                                      newQuantity,
+                                                                ),
                                                               );
                                                         },
                                                       ),

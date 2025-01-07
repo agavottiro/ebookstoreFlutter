@@ -24,24 +24,25 @@ class CartIconWidget extends StatelessWidget {
                 color: AppColor.darkPink,
                 height: 30,
               ),
-              Positioned(
-                  top: -5,
-                  right: -5,
-                  child: Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(50),
-                        color: AppColor.green),
-                    width: 18,
-                    height: 18,
-                    child: Text(
-                      total.toString(),
-                      style: TextStyle(
-                          color: AppColor.black,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600),
-                      textAlign: TextAlign.center,
-                    ),
-                  ))
+              if (total != 0)
+                Positioned(
+                    top: -5,
+                    right: -5,
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(50),
+                          color: AppColor.green),
+                      width: 18,
+                      height: 18,
+                      child: Text(
+                        total.toString(),
+                        style: TextStyle(
+                            color: AppColor.black,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600),
+                        textAlign: TextAlign.center,
+                      ),
+                    ))
             ],
           ),
         );
