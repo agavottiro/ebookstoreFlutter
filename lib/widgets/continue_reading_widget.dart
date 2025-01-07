@@ -11,7 +11,7 @@ class ContinueReadingWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 16, 8, 16),
+      padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
       child: Container(
         width: double.infinity,
         height: 95,
